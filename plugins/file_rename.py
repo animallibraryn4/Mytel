@@ -30,20 +30,68 @@ user_queues = {}
 renaming_operations = {}
 recent_verification_checks = {}
 
-# Patterns for extracting file information
+# Original patterns for filenames (keep these)
 pattern1 = re.compile(r'S(\d+)(?:E|EP)(\d+)')
 pattern2 = re.compile(r'S(\d+)\s*(?:E|EP|-\s*EP)(\d+)')
 pattern3 = re.compile(r'(?:[([<{]?\s*(?:E|EP)\s*(\d+)\s*[)\]>}]?)')
 pattern3_2 = re.compile(r'(?:\s*-\s*(\d+)\s*)')
 pattern4 = re.compile(r'S(\d+)[^\d]*(\d+)', re.IGNORECASE)
 patternX = re.compile(r'(\d+)')
+pattern11 = re.compile(r'Vol(\d+)\s*-\s*Ch(\d+)', re.IGNORECASE)
+
+# NEW: Enhanced patterns for caption mode - IMPROVED WITH FULL WORD PATTERNS
+caption_episode_patterns = [
+    # "Episode :- 02" format (improved)
+    re.compile(r'[Ee]pisode\s*[:-]+\s*(\d+)', re.IGNORECASE),
+    # "EP 02" format
+    re.compile(r'[Ee][Pp](?:isode)?\s+(\d+)', re.IGNORECASE),
+    # "E02" format
+    re.compile(r'[Ee](\d+)', re.IGNORECASE),
+    # "Episode 02" format
+    re.compile(r'[Ee]pisode\s+(\d+)', re.IGNORECASE),
+    # "[EP 02]" or "(EP 02)" format
+    re.compile(r'[\[\(\{]\s*[Ee][Pp]\s*(\d+)\s*[\]\)\}]', re.IGNORECASE),
+    # Just episode number in brackets
+    re.compile(r'[\[\(\{]\s*(\d+)\s*[\]\)\}]'),
+    # NEW: Full word "EPISODE" with various separators
+    re.compile(r'[Ee][Pp][Ii][Ss][Oo][Dd][Ee]\s*[:-]+\s*(\d+)', re.IGNORECASE),
+    # NEW: "EP" with colon and dash
+    re.compile(r'[Ee][Pp]\s*[:-]+\s*(\d+)', re.IGNORECASE),
+    # NEW: "EPISODE - 01" with just dash
+    re.compile(r'[Ee][Pp][Ii][Ss][Oo][Dd][Ee]\s*-\s*(\d+)', re.IGNORECASE),
+    # NEW: "EP - 01" with just dash
+    re.compile(r'[Ee][Pp]\s*-\s*(\d+)', re.IGNORECASE),
+]
+
+caption_season_patterns = [
+    # "[ SEASON :- 10 ]" format
+    re.compile(r'[\[\(\{]\s*[Ss]eason\s*[:-]+\s*(\d+)\s*[\]\)\}]', re.IGNORECASE),
+    # "Season :- 10" format
+    re.compile(r'[Ss]eason\s*[:-]+\s*(\d+)', re.IGNORECASE),
+    # "S10" format
+    re.compile(r'[Ss](\d+)', re.IGNORECASE),
+    # "Season 10" format
+    re.compile(r'[Ss]eason\s+(\d+)', re.IGNORECASE),
+    # "SEA 10" format
+    re.compile(r'[Ss][Ee][Aa]\s+(\d+)', re.IGNORECASE),
+    # NEW: Full word "SEASON" with various separators
+    re.compile(r'[Ss][Ee][Aa][Ss][Oo][Nn]\s*[:-]+\s*(\d+)', re.IGNORECASE),
+    # NEW: "SEASON - 10" with just dash
+    re.compile(r'[Ss][Ee][Aa][Ss][Oo][Nn]\s*-\s*(\d+)', re.IGNORECASE),
+]
+
+# NEW: Additional patterns for full word matching
+pattern_season_full = re.compile(r'[Ss][Ee][Aa][Ss][Oo][Nn]\s*[:-]?\s*(\d+)', re.IGNORECASE)
+pattern_episode_full = re.compile(r'[Ee][Pp][Ii][Ss][Oo][Dd][Ee]\s*[:-]?\s*(\d+)', re.IGNORECASE)
+pattern_ep_full = re.compile(r'[Ee][Pp]\s*[:-]?\s*(\d+)', re.IGNORECASE)
+
+# Quality patterns (already exist, keep them)
 pattern5 = re.compile(r'\b(?:.*?(\d{3,4}[^\dp]*p).*?|.*?(\d{3,4}p))\b', re.IGNORECASE)
 pattern6 = re.compile(r'[([<{]?\s*4k\s*[)\]>}]?', re.IGNORECASE)
 pattern7 = re.compile(r'[([<{]?\s*2k\s*[)\]>}]?', re.IGNORECASE)
 pattern8 = re.compile(r'[([<{]?\s*HdRip\s*[)\]>}]?|\bHdRip\b', re.IGNORECASE)
 pattern9 = re.compile(r'[([<{]?\s*4kX264\s*[)\]>}]?', re.IGNORECASE)
-pattern10 = re.compile(r'[([<{]?\s*4kx265\s*[)]>}]?', re.IGNORECASE)
-pattern11 = re.compile(r'Vol(\d+)\s*-\s*Ch(\d+)', re.IGNORECASE)
+pattern10 = re.compile(r'[([<{]?\s*4kx265\s*[)\]>}]?', re.IGNORECASE)
 
 # Import from sequence.py to check if user is in sequence mode
 from plugins.sequence import user_sequences as sequence_user_sequences
