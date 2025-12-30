@@ -45,27 +45,27 @@ pattern9 = re.compile(r'[([<{]?\s*4kX264\s*[)\]>}]?', re.IGNORECASE)
 pattern10 = re.compile(r'[([<{]?\s*4kx265\s*[)]>}]?', re.IGNORECASE)
 pattern11 = re.compile(r'Vol(\d+)\s*-\s*Ch(\d+)', re.IGNORECASE)
 
-# New patterns for episode extraction
-pattern12 = re.compile(r'[Ee]pisode\s*[:-]+\s*(\d+)', re.IGNORECASE)  # "Episode :- 02"
-pattern13 = re.compile(r'[Ee][Pp](?:isode)?\s+(\d+)', re.IGNORECASE)  # "EP 02"
-pattern14 = re.compile(r'[Ee](\d+)', re.IGNORECASE)  # "E02"
-pattern15 = re.compile(r'[Ee]pisode\s+(\d+)', re.IGNORECASE)  # "Episode 02"
-pattern16 = re.compile(r'[\[\(\{]\s*[Ee][Pp]\s*(\d+)\s*[\]\)\}]', re.IGNORECASE)  # "[EP 02]"
-pattern17 = re.compile(r'[\[\(\{]\s*(\d+)\s*[\]\)\}]')  # Just episode number in brackets
-pattern18 = re.compile(r'[Ee][Pp][Ii][Ss][Oo][Dd][Ee]\s*[:-]+\s*(\d+)', re.IGNORECASE)  # "EPISODE :- 02"
-pattern19 = re.compile(r'[Ee][Pp]\s*[:-]+\s*(\d+)', re.IGNORECASE)  # "EP :- 02"
-pattern20 = re.compile(r'[Ee][Pp][Ii][Ss][Oo][Dd][Ee]\s*-\s*(\d+)', re.IGNORECASE)  # "EPISODE - 01"
-pattern21 = re.compile(r'[Ee][Pp]\s*-\s*(\d+)', re.IGNORECASE)  # "EP - 01"
+# NEW PATTERNS ADDED BELOW:
+# Episode patterns
+pattern12 = re.compile(r'[Ee]pisode\s*[:-]+\s*(\d+)')  # "Episode :- 02"
+pattern13 = re.compile(r'[Ee][Pp](?:isode)?\s+(\d+)')  # "EP 02"
+pattern14 = re.compile(r'[Ee](\d+)')  # "E02"
+pattern15 = re.compile(r'[Ee]pisode\s+(\d+)')  # "Episode 02"
+pattern16 = re.compile(r'[\[\(\{]\s*[Ee][Pp]\s*(\d+)\s*[\]\)\}]')  # "[EP 02]"
+pattern17 = re.compile(r'[\[\(\{]\s*(\d+)\s*[\]\)\}]')  # Just number in brackets
+pattern18 = re.compile(r'[Ee][Pp][Ii][Ss][Oo][Dd][Ee]\s*[:-]+\s*(\d+)')  # "EPISODE :- 02"
+pattern19 = re.compile(r'[Ee][Pp]\s*[:-]+\s*(\d+)')  # "EP :- 02"
+pattern20 = re.compile(r'[Ee][Pp][Ii][Ss][Oo][Dd][Ee]\s*-\s*(\d+)')  # "EPISODE - 01"
+pattern21 = re.compile(r'[Ee][Pp]\s*-\s*(\d+)')  # "EP - 01"
 
-# New patterns for season extraction
-pattern22 = re.compile(r'[\[\(\{]\s*[Ss]eason\s*[:-]+\s*(\d+)\s*[\]\)\}]', re.IGNORECASE)  # "[ SEASON :- 10 ]"
-pattern23 = re.compile(r'[Ss]eason\s*[:-]+\s*(\d+)', re.IGNORECASE)  # "Season :- 10"
-pattern24 = re.compile(r'[Ss](\d+)', re.IGNORECASE)  # "S10"
-pattern25 = re.compile(r'[Ss]eason\s+(\d+)', re.IGNORECASE)  # "Season 10"
-pattern26 = re.compile(r'[Ss][Ee][Aa]\s+(\d+)', re.IGNORECASE)  # "SEA 10"
-pattern27 = re.compile(r'[Ss][Ee][Aa][Ss][Oo][Nn]\s*[:-]+\s*(\d+)', re.IGNORECASE)  # "SEASON :- 10"
-pattern28 = re.compile(r'[Ss][Ee][Aa][Ss][Oo][Nn]\s*-\s*(\d+)', re.IGNORECASE)  # "SEASON - 10"
-
+# Season patterns
+pattern22 = re.compile(r'[\[\(\{]\s*[Ss]eason\s*[:-]+\s*(\d+)\s*[\]\)\}]')  # "[ SEASON :- 10 ]"
+pattern23 = re.compile(r'[Ss]eason\s*[:-]+\s*(\d+)')  # "Season :- 10"
+pattern24 = re.compile(r'[Ss](\d+)')  # "S10"
+pattern25 = re.compile(r'[Ss]eason\s+(\d+)')  # "Season 10"
+pattern26 = re.compile(r'[Ss][Ee][Aa]\s+(\d+)')  # "SEA 10"
+pattern27 = re.compile(r'[Ss][Ee][Aa][Ss][Oo][Nn]\s*[:-]+\s*(\d+)')  # "SEASON :- 10"
+pattern28 = re.compile(r'[Ss][Ee][Aa][Ss][Oo][Nn]\s*-\s*(\d+)')  # "SEASON - 10"
 
 # Import from sequence.py to check if user is in sequence mode
 from plugins.sequence import user_sequences as sequence_user_sequences
@@ -186,20 +186,42 @@ def extract_quality(filename):
     return "Unknown"
 
 def extract_episode_number(filename):
-    for pattern in [pattern1, pattern2, pattern3, pattern3_2, pattern4, patternX]:
+    # Check all episode patterns including new ones
+    all_episode_patterns = [
+        pattern1, pattern2, pattern3, pattern3_2, pattern4, patternX,
+        # New patterns added
+        pattern12, pattern13, pattern14, pattern15, pattern16, pattern17,
+        pattern18, pattern19, pattern20, pattern21
+    ]
+    
+    for pattern in all_episode_patterns:
         match = re.search(pattern, filename)
         if match: 
+            # For patterns that have group 2 (like S01E02), return group 2
             if pattern in [pattern1, pattern2, pattern4]:
                 return match.group(2) 
             else:
+                # For all other patterns, return the first capture group
                 return match.group(1)
     return None
 
 def extract_season_number(filename):
-    for pattern in [pattern1, pattern4]:
+    # Check all season patterns including new ones
+    all_season_patterns = [
+        pattern1, pattern4,
+        # New patterns added
+        pattern22, pattern23, pattern24, pattern25, pattern26, pattern27, pattern28
+    ]
+    
+    for pattern in all_season_patterns:
         match = re.search(pattern, filename)
         if match: 
-            return match.group(1)
+            # For pattern1 (S01E02) and pattern4 (S01 any 02), return group 1
+            if pattern in [pattern1, pattern4]:
+                return match.group(1)
+            else:
+                # For all other patterns, return the first capture group
+                return match.group(1)
     return None
 
 def extract_volume_chapter(filename):
@@ -638,8 +660,3 @@ async def auto_rename_files(client, message):
         }
     
     await user_queues[user_id]["queue"].put(message)
-
-
-    
-    
-    
