@@ -4,7 +4,7 @@
 
 import os
 API_ID = 22299340
-API_HASH = ""
+API_HASH = "09b09f3e2ff1306da4a19888f614d937"
 BOT_TOKEN = ""
 #Logs
 LOG_CHANNEL = "" 
