@@ -9,8 +9,8 @@ class Config:
     # Telegram Configuration
     API_ID = 22299340
     API_HASH = ""  # Add your API hash
-    MAIN_BOT_TOKEN = "7765824536:AAFxnM5qftx3LWjLjxKsnXeuLf3XMXo950o"  # Add your bot token
-    CLIENT_BOT_TOKEN = "7906213903:AAEvUmwjmwTHC9NtayJ2NLbYsROQdaOeZR0"  # Add your client bot token
+    MAIN_BOT_TOKEN = ""  # Add your bot token
+    CLIENT_BOT_TOKEN = ":"  # Add your client bot token
     
     # Chat IDs
     OWNER_IDS = ["5380609667"]  # Convert to list of ints if needed
@@ -19,7 +19,7 @@ class Config:
     PRODUCTION_CHAT = -1001925970923
     
     # Database
-    DATABASE_URL = "mongodb+srv://mikota4432:jkJDQuZH6o8pxxZe@cluster0.2vngilq.mongodb.net/?retryWrites=true&w=majority"
+    DATABASE_URL = "mongodb+srv://miko/?retryWrites=true&w=majority"
     DATABASE_NAME = "AAB"
     
     # File Paths
@@ -50,4 +50,5 @@ class Config:
     WORKER_CHECK_INTERVAL = 300  # 5 minutes
 
 config = Config()
+
 
